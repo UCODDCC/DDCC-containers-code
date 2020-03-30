@@ -24,6 +24,6 @@ int main(int argc, char const *argv[])
     fflush(pFile);
 
 
-    Server server(std::stoi("7007"), mainHandler);
+    Server server(std::stoi(getenv("PORT")), mainHandler);
     while (true) server.handleNextConnection();
 }
