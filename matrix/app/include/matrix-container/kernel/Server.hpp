@@ -12,7 +12,8 @@
 #include <cstring>
 #include <stdexcept>
 #include <thread>
-
+#include <iostream>
+#include <fstream>
 
 /**
  * All the handlers must follow this type
