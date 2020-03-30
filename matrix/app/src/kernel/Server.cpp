@@ -28,6 +28,11 @@ Server::Server(int portno, handlerType requestHandler) {
 
 
 void Server::handleNextConnection() {
+    std::fstream idlefile;
+    idlefile.open ("/idle", std::ios::in | std::ios::binary);
+    idlefile << 0x0;
+    idlefile.close();
+
     serverConnection client;
     std::string payload;
     char buffer[1024];
@@ -54,6 +59,10 @@ void Server::handleNextConnection() {
             0
     );
     close(client.socket_fd);
+
+    idlefile.open ("/idle", std::ios::in | std::ios::binary);
+    idlefile << 0x1;
+    idlefile.close();
 }
 
 void Server::exit() {
