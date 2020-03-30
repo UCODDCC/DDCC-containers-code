@@ -28,10 +28,13 @@ Server::Server(int portno, handlerType requestHandler) {
 
 
 void Server::handleNextConnection() {
-    std::fstream idlefile;
-    idlefile.open ("/idle", std::ios::in | std::ios::binary);
-    idlefile << 0x0;
-    idlefile.close();
+    FILE * pFile;
+    pFile = fopen ("./idle" , "w");
+    if (pFile == NULL)
+        throw std::runtime_error("cant create /idle file");
+    fputs ("1", pFile);
+    fclose (pFile);
+    fflush(pFile);
 
     serverConnection client;
     std::string payload;
@@ -60,9 +63,12 @@ void Server::handleNextConnection() {
     );
     close(client.socket_fd);
 
-    idlefile.open ("/idle", std::ios::in | std::ios::binary);
-    idlefile << 0x1;
-    idlefile.close();
+    pFile = fopen ("/idle" , "w");
+    if (pFile == NULL)
+        throw std::runtime_error("cant create /idle file");
+    fputs ("1", pFile);
+    fclose (pFile);
+    fflush(pFile);
 }
 
 void Server::exit() {
