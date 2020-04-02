@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <matrix-container/handlers/multiplicationHandler.hpp>
+
 std::string mainHandler(const std::string& message);
 
 #endif

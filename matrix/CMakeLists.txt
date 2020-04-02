@@ -5,6 +5,8 @@ project (DDCD-matrix-container)
 set(SOURCES
         app/src/kernel/Server.cpp
         app/src/handlers/mainHandler.cpp
+        app/src/handlers/multiplicationHandler.cpp
+        app/src/utils.cpp
         )
 
 set(TARGET app/src/app.cpp)
