@@ -11,5 +11,5 @@ std::string mainHandler(const std::string& message) {
         return multiplicationHandler(message);
 
 
-    return std::string("-undefined opcode<").append(sub_operation_code).append(">");
+    return std::string("-undefined opcode<").append(sub_operation_code).append(" in ").append(message).append(">");
 }
