@@ -89,7 +89,7 @@ std::string multiplicationHandler(const std::string& message) {
         size_by = std::stoi(size_b.substr(size_b.find('x') + 1, size_b.size()));
     }
     catch(std::invalid_argument& e){
-        return std::string("-metadata is not complete<>");
+        return std::string("-inconsistent metadata<metadata is incomplete or missing>");
     }
 
     a = (float**)malloc(size_ay* sizeof(float*));
@@ -127,7 +127,7 @@ std::string multiplicationHandler(const std::string& message) {
         }
     }
     catch(std::invalid_argument &e){
-        return std::string("-data is not coherent to metadata<>");
+        return std::string("-inconsistent metadata<data is not coherent to the metadata provided>");
     }
 
     /*printf("matrix 1\n");
