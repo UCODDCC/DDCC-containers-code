@@ -10,8 +10,7 @@ struct workerParams {
     float** c; // result
     int thread_id;
     int n_threads;
-    int n_lines;
-    int line_size;
+    int size;
     pthread_t thread;
 };
 
