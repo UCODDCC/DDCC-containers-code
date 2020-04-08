@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8.11)
 
-project (DDCD-matrix-container)
+project (DDCD-vector-container)
 
 set(SOURCES
         app/src/kernel/Server.cpp

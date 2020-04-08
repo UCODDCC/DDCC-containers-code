@@ -1,8 +1,9 @@
 #include <vector-container/handlers/additionHandler.hpp>
 #include <vector-container/utils.hpp>
 #include <stdexcept>
+#include <iostream>
 
-#define BASE_MEM_BLOCK 1024
+#define BLOCK_SIZE 1024
 
 void *Worker(void* params) {
     auto* thread_params = (struct workerParams*) params;
@@ -17,22 +18,19 @@ void *Worker(void* params) {
      *
      * The operations finishes once the total index is greater or equal to the vector size
      */
-    int base_index = thread_params->thread_id * BASE_MEM_BLOCK;
-
-    for (int block_index = thread_params->thread_id; (block_index * BASE_MEM_BLOCK); block_index+=thread_params->n_threads) {
-        for (int vector_index = block_index * BASE_MEM_BLOCK; vector_index < (block_index+1) * BASE_MEM_BLOCK; ++vector_index) {
-            if (vector_index >= thread_params->size )
+    for (int blk_bp = thread_params->thread_id * BLOCK_SIZE; ; blk_bp += BLOCK_SIZE * thread_params->n_threads) {
+        for (int blk_sp = blk_bp; blk_sp < blk_bp + BLOCK_SIZE; ++blk_sp) {
+            if (blk_sp >= thread_params->size)
                 pthread_exit(nullptr);
             else
-                (*thread_params->c)[vector_index] = (*thread_params->a)[vector_index] + (*thread_params->b)[vector_index];
+                (*thread_params->c)[blk_sp] = (*thread_params->a)[blk_sp] + (*thread_params->b)[blk_sp];
         }
     }
-    pthread_exit(nullptr);
 }
 
 int vector_addition(float** a, float** b, int size, float** result, int n_threads) {
     auto* params = (struct workerParams*)malloc(n_threads * sizeof(struct workerParams));
-    for (size_t i = 0; i < n_threads; i++)
+    for (size_t i = 0; i < n_threads; ++i)
     {
         params[i].a=a;
         params[i].b=b;
