@@ -3,45 +3,21 @@
 #include <stdexcept>
 
 
-
-void *lineWorker_horizontal(void* params) {
+void *worker(void* params) {
     auto* thread_params = (struct lineWorkerParams*) params;
     float tmp;
-
-    for (size_t line_a = 0; line_a < thread_params->n_lines; line_a += thread_params->n_threads) {
-        // clear tmp
-        tmp = 0;
-        // get line result into tmp
-        for (size_t line_b = 0; line_b < thread_params->n_lines; line_b += thread_params->n_threads) {
-            for (size_t line_pos = 0; line_pos < thread_params->line_size; line_pos++) { // item in line
-                tmp += (*thread_params->a)[line_a][line_pos] * (*thread_params->b)[line_pos][line_b];
+    for (int i = thread_params->thread_id; i < thread_params->n_lines; i+=thread_params->n_threads) { // worker line
+        for (int j = 0; j < thread_params->line_size; ++j) { // walks the line
+            tmp = 0;
+            for (int k = 0; k < thread_params->line_size; ++k) {
+                tmp += (*thread_params->a)[i][k] * (*thread_params->b)[k][j];
             }
-            // copy the line result to the final matrix cell
-            (*thread_params->c)[line_a][line_b] = tmp;
+            (*thread_params->c)[i][j] = tmp;
         }
     }
     pthread_exit(nullptr);
 }
 
-
-void *lineWorker_vertical(void* params) {
-    auto* thread_params = (struct lineWorkerParams*) params;
-    float tmp;
-
-    for (size_t line_b = 0; line_b < thread_params->n_lines; line_b += thread_params->n_threads) {
-        // clear tmp
-        tmp = 0;
-        // get line result into tmp
-        for (size_t line_a = 0; line_a < thread_params->n_lines; line_a += thread_params->n_threads) {
-            for (size_t line_pos = 0; line_pos < thread_params->line_size; line_pos++) { // item in line
-                tmp += (*thread_params->a)[line_a][line_pos] * (*thread_params->b)[line_pos][line_b];
-            }
-            // copy the line result to the final matrix cell
-            (*thread_params->c)[line_a][line_b] = tmp;
-        }
-    }
-    pthread_exit(nullptr);
-}
 
 int matrix_multiplication(float*** a, float*** b, int dim_ax, int dim_ay, int dim_bx, int dim_by, float*** result, int n_threads) {
     if (dim_ay != dim_bx)
@@ -60,7 +36,7 @@ int matrix_multiplication(float*** a, float*** b, int dim_ax, int dim_ay, int di
     }
 
     for (size_t i = 0; i < n_threads; i++)
-        pthread_create(&(params[i].thread), nullptr, lineWorker_vertical, (void*)&(params[i]));
+        pthread_create(&(params[i].thread), nullptr, worker, (void*)&(params[i]));
     for (size_t i = 0; i < n_threads; i++)
         pthread_join(params[i].thread, nullptr);
     return 0;
